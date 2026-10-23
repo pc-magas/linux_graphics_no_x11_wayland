@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GLES2/gl2.h>
+#include "square.h"
 
-static GLuint createShader(GLenum type, const char *source)
+GLuint createShader(GLenum type, const char *source)
 {
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, &source, NULL);
@@ -21,7 +21,7 @@ static GLuint createShader(GLenum type, const char *source)
     return shader;
 }
 
-static GLuint createProgram(void)
+GLuint createProgram(void)
 {
     const char *vs =
         "#version 100\n"
@@ -66,7 +66,7 @@ static GLuint createProgram(void)
     return p;
 }
 
-static void drawSquare(int width, int height)
+void drawSquare(GLuint program, int width, int height)
 {
     static const GLfloat vertices[] = {
         -0.5f, -0.5f,

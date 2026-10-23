@@ -9,7 +9,7 @@ Type=simple
 User=drmusr
 SupplementaryGroups=video
 
-# Ommit if no SDL_SetHint(SDL_HINT_VIDEODRIVER, "kmsdrm"); is defined
+# Optional if SDL_SetHint(SDL_HINT_VIDEODRIVER, "kmsdrm"); is defined
 Environment="SDL_VIDEODRIVER=kmsdrm"
 
 ExecStartPre=+/usr/bin/chvt 7
