@@ -1,0 +1,33 @@
+[Unit]
+Description=Python Framebuffer Renderer
+After=systemd-modules-load.service systemd-user-sessions.service
+ConditionPathExists=/dev/fb0
+
+[Service]
+Type=simple
+
+User=framebuffer
+SupplementaryGroups=video
+
+ExecStartPre=+/usr/bin/chvt 7
+ExecStart=/usr/bin/python3 -u /opt/framebuffer/renderer.py
+
+Restart=on-failure
+RestartSec=2
+
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+
+[Install]
+WantedBy=graphical.target

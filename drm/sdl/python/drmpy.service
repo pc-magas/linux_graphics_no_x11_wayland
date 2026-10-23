@@ -1,0 +1,37 @@
+[Unit]
+Description=DRM SDL RENDERER
+After=systemd-modules-load.service systemd-user-sessions.service
+ConditionPathExists=/dev/dri/card0
+
+[Service]
+Type=simple
+
+User=drmusr
+SupplementaryGroups=video
+
+# Optional if sdl2.SDL_SetHint(b"SDL_VIDEODRIVER", b"kmsdrm") is defined
+Environment="SDL_VIDEODRIVER=kmsdrm"
+
+ExecStartPre=+/usr/bin/chvt 7
+ExecStart=/opt/framebuffer/.venv/python /opt/sdl_drm_py/main.py
+
+
+Restart=on-failure
+RestartSec=2
+
+StandardInput=tty
+StandardOutput=journal
+StandardError=journal
+
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
