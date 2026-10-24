@@ -51,6 +51,20 @@ int main(void)
 
     eglMakeCurrent(gbm_display, gbm_surface, gbm_surface, gbm_context);  
 
+    drmModeConnector *connector = getDRMConnector(drm_fd);
+    if (!connector) {
+        fprintf(stderr, "No connected DRM connector found\n");
+        close(drm_fd);
+        return 1;
+    }
+
+    drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
+    if (!crtc) {
+        fprintf(stderr, "No compatible CRTC found\n");
+        drmModeFreeConnector(connector);
+        close(drm_fd);
+        return 1;
+    }
 
     GLuint program = createProgram();
     if (!program) {
@@ -61,8 +75,8 @@ int main(void)
         drawSquare(program, WIDTH, HEIGHT);
         eglSwapBuffers(gbm_display, gbm_surface);
 
-        // struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
-        // drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
+        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
+        drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
 
     eglDestroySurface(gbm_display, gbm_surface);  
