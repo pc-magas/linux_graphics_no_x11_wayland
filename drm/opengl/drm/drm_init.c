@@ -1,14 +1,30 @@
 
 #include "drm_init.h"
 
-EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev) {
-        
-    EGLDisplay egl_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, gbm_dev, NULL);  
-    
-    eglInitialize(egl_display, NULL, NULL);
+
+EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev)
+{
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay =
+        (PFNEGLGETPLATFORMDISPLAYEXTPROC)
+        eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+    if (!getPlatformDisplay) {
+        return EGL_NO_DISPLAY;
+    }
+
+    EGLDisplay egl_display = getPlatformDisplay(EGL_PLATFORM_GBM_KHR,gbm_dev,NULL);
+
+    if (egl_display == EGL_NO_DISPLAY) {
+        return EGL_NO_DISPLAY;
+    }
+
+    if (!eglInitialize(egl_display, NULL, NULL)) {
+        return EGL_NO_DISPLAY;
+    }
 
     return egl_display;
 }
+
 
 EGLSurface initEGLSurface(struct gbm_device *gbm_dev,EGLDisplay display, EGLConfig config, unsigned int width, unsigned int height){
 
