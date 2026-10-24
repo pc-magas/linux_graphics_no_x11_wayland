@@ -42,7 +42,7 @@ int main(void)
     eglChooseConfig(gbm_display, config_attribs, &config, 1, &num_configs);  
 
     gbm_surface = initEGLSurface(gbm_display,gbm_display,config,WIDTH,HEIGHT); 
-    gbm_context = initEGLContect(gbm_display,gbm_display,config);
+    gbm_context = initEGLContext(gbm_display,gbm_display,config);
 
     eglMakeCurrent(gbm_display, gbm_surface, gbm_surface, gbm_context);  
 
