@@ -52,7 +52,7 @@ int main(void)
     }
 
     while (true) {
-        drawSquare(program, width, height);
+        drawSquare(program, WIDTH, HEIGHT);
         eglSwapBuffers(gbm_display, gbm_surface);
 
         // struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
