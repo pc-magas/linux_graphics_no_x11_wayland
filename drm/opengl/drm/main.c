@@ -24,8 +24,6 @@ int main(void)
     EGLSurface gbm_surface;
     EGLContext gbm_context;
 
-    int width, height;
-
     gbm_display = initEGLDisplay(gbm_dev);
 
     EGLConfig config;  
