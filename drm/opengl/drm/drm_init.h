@@ -7,9 +7,9 @@
 // Define EGL extensions (if not in headers)  
 #define EGL_PLATFORM_GBM_KHR 0x31D7
 
-EGLDisplay initEGLDisplay(gbm_device *gbm_dev);
+EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev);
 
-EGLSurface initEGLSurface(gbm_device *gbm_dev, EGLConfig config, unsigned int width, unsigned int height);
+EGLSurface initEGLSurface(struct gbm_device *gbm_dev, EGLConfig config, unsigned int width, unsigned int height);
 
 EGLContext initEGLContext(EGLDisplay display,EGLConfig config);
 

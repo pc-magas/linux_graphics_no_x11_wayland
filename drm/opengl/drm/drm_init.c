@@ -1,7 +1,7 @@
 
 #include "drm_init.h"
 
-EGLDisplay initEGLDisplay(gbm_device *gbm_dev) {
+EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev) {
     PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =  eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, gbm_dev, NULL);
     EGLDisplay egl_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, gbm_dev, NULL);  
     eglInitialize(egl_dpy, NULL, NULL);
@@ -9,7 +9,7 @@ EGLDisplay initEGLDisplay(gbm_device *gbm_dev) {
     return egl_display
 }
 
-EGLSurface initEGLSurface(gbm_device *gbm_dev, EGLConfig config, unsigned int width, int height) {
+EGLSurface initEGLSurface(struct gbm_device *gbm_dev, EGLConfig config, unsigned int width, int height) {
 
     struct gbm_surface *gbm_surf = gbm_surface_create(gbm_dev, width, height, GBM_BO_FORMAT_ARGB8888, GBM_BO_USE_RENDERING);  
  
