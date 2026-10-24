@@ -44,7 +44,7 @@ int main(void)
     gbm_surface = initEGLSurface(gbm_display,config,WIDTH,HEIGHT); 
     gbm_context = initEGLContect(gbm_display,config);
 
-    eglMakeCurrent(gbm_display, egl_surf, egl_surf, egl_ctx);  
+    eglMakeCurrent(gbm_display, gbm_surface, gbm_surface, gbm_context);  
 
 
     GLuint program = createProgram();
@@ -54,15 +54,15 @@ int main(void)
 
     while (true) {
         drawSquare(program, width, height);
-        eglSwapBuffers(gbm_display, egl_surf);
+        eglSwapBuffers(gbm_display, gbm_surface);
 
-        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);  
+        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
 
-    eglDestroySurface(egl_dpy, egl_surf);  
-    eglDestroyContext(egl_dpy, egl_ctx);  
-    eglTerminate(egl_dpy);  
+    eglDestroySurface(gbm_display, gbm_surface);  
+    eglDestroyContext(gbm_display, gbm_context);  
+    eglTerminate(gbm_display);  
     gbm_device_destroy(gbm_dev);  
     close(drm_fd);
 
