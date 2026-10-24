@@ -58,8 +58,8 @@ int main(void)
         drawSquare(program, width, height);
         eglSwapBuffers(gbm_display, gbm_surface);
 
-        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
-        drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
+        // struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
+        // drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
 
     eglDestroySurface(gbm_display, gbm_surface);  
