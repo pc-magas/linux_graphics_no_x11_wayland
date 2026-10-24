@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <fcntl.h>
 
 #define GLFW_INCLUDE_ES2
 
 #include <drm.h>  
 #include <drm_mode.h>  
 #include <gbm.h>
+
 
 #include "square.h"
 #include "drm_init.h"
@@ -62,7 +64,7 @@ int main(void)
     eglDestroyContext(egl_dpy, egl_ctx);  
     eglTerminate(egl_dpy);  
     gbm_device_destroy(gbm_dev);  
-    fclose(drm_fd);
+    close(drm_fd);
 
     return 0;
 }
