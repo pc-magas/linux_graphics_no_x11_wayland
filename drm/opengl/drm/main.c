@@ -26,6 +26,11 @@ int main(void)
 
     gbm_display = initEGLDisplay(gbm_dev);
 
+    if(gbm_display == EGL_NO_DISPLAY){
+        fprintf(stderr,"Unable to Initialize display");
+        return 1;
+    }
+
     EGLConfig config;  
     EGLint num_configs;
 
