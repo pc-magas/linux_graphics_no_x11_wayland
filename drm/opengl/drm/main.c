@@ -25,7 +25,7 @@ int main(void)
 
     int width, height;
 
-    gbm_display = initEGLDisplay(gbm_device);
+    gbm_display = initEGLDisplay(gbm_dev);
 
     EGLConfig config;  
     EGLint num_configs;
@@ -39,12 +39,12 @@ int main(void)
         EGL_NONE
     };
 
-    eglChooseConfig(egl_dpy, config_attribs, &config, 1, &num_configs);  
+    eglChooseConfig(gbm_display, config_attribs, &config, 1, &num_configs);  
 
-    gbm_surface = initEGLSurface(display,config,WIDTH,HEIGHT); 
-    gbm_context = initEGLContect(display,config);
+    gbm_surface = initEGLSurface(gbm_display,config,WIDTH,HEIGHT); 
+    gbm_context = initEGLContect(gbm_display,config);
 
-    eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx);  
+    eglMakeCurrent(gbm_display, egl_surf, egl_surf, egl_ctx);  
 
 
     GLuint program = createProgram();
@@ -54,7 +54,7 @@ int main(void)
 
     while (true) {
         drawSquare(program, width, height);
-        eglSwapBuffers(egl_dpy, egl_surf);
+        eglSwapBuffers(gbm_display, egl_surf);
 
         struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);  
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
