@@ -62,7 +62,7 @@ int main(void)
     eglDestroyContext(egl_dpy, egl_ctx);  
     eglTerminate(egl_dpy);  
     gbm_device_destroy(gbm_dev);  
-    close(drm_fd);
+    fclose(drm_fd);
 
     return 0;
 }
