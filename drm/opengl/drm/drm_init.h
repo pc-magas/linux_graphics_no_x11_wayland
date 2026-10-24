@@ -3,7 +3,9 @@
 
 #include <EGL/egl.h>  
 #include <EGL/eglext.h>  
- 
+#include <stddef.h>
+#include <gbm.h>
+
 // Define EGL extensions (if not in headers)  
 #define EGL_PLATFORM_GBM_KHR 0x31D7
 
