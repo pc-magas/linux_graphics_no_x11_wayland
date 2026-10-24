@@ -2,7 +2,6 @@
 #include <fcntl.h>       
 #include <unistd.h>
 
-
 #define GLFW_INCLUDE_ES2
 
 #include <drm.h>  
