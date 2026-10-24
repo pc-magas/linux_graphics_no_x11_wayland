@@ -1,6 +1,8 @@
 CC      ?= gcc
-CFLAGS  += -Wall -Wextra -O2 $(shell pkg-config --cflags glfw3 glesv2)
-LDLIBS  = $(shell pkg-config --libs glfw3 glesv2)
+
+PKGS = libdrm gbm egl glesv2
+CFLAGS  += -Wall -Wextra -O2 $(shell pkg-config --cflags $(PKGS))
+LDLIBS  = $(shell pkg-config --libs $(PKGS))
 
 TARGET  = main
 OBJS    = main.o square.o drm_init.o
