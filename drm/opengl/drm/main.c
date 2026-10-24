@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <fcntl.h>       
 #include <unistd.h>
+#include <stdio.h>
 
 #define GLFW_INCLUDE_ES2
 
