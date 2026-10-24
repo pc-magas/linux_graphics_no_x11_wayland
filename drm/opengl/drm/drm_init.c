@@ -1,7 +1,7 @@
 
 #include "drm_init.h"
 
-EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev, EGLDisplay display) {
+EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev) {
     PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT =  eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, gbm_dev, NULL);
     EGLDisplay egl_display = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, gbm_dev, NULL);  
     eglInitialize(display, NULL, NULL);
