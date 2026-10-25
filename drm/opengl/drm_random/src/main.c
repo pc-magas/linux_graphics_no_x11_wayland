@@ -2,6 +2,7 @@
 #include <fcntl.h>       
 #include <unistd.h>
 #include <stdio.h>
+#include <time.h>
 
 #define GLFW_INCLUDE_ES2
 
@@ -13,8 +14,7 @@
 #include "square.h"
 #include "egl_init.h"
 #include "drm_init.h"
-#include <time.h>
-
+#include "nextframe.h"
 
 
 int main(void)
@@ -99,22 +99,17 @@ int main(void)
 
     srand((unsigned int)time(NULL));
 
-    
-
     puts("Draw Square\n");
 
-    drawSquare(program, mode_w,mode_h);
-    eglSwapBuffers(egl_display, egl_surface);
-        
-    if (displayRefresh( drm_fd, gbm_surf, crtc_id, conn_id, &mode, &current) != 0) {
-        fprintf(stderr, "Display refresh failed\n");
-        return 1;
+    while(true){
+        drawSquare(program, mode_w,mode_h);
+        eglSwapBuffers(egl_display, egl_surface);
+            
+        if (displayNextFrame( drm_fd, gbm_surf, crtc_id, conn_id, &current) != 0) {
+            fprintf(stderr, "Display refresh failed\n");
+            break;
+        }
     }
-
-    puts("Framebuffer displayed");
-    sleep(10);
-
-    puts("Cleanup\n");
 
     eglDestroySurface(egl_display, egl_surface);  
     eglDestroyContext(egl_display, egl_context);  
