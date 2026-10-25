@@ -11,17 +11,13 @@ drmModeConnector *getDRMConnector(int drm_fd)
     drmModeConnector *connector = NULL;
 
     for (int i = 0; i < resources->count_connectors; i++) {
-        drmModeConnector *candidate = drmModeGetConnector(
-            drm_fd,
-            resources->connectors[i]
-        );
+        drmModeConnector *candidate = drmModeGetConnector(drm_fd,resources->connectors[i]);
 
         if (!candidate){
             continue;
         }
 
-        if (candidate->connection == DRM_MODE_CONNECTED &&
-            candidate->count_modes > 0) {
+        if (candidate->connection == DRM_MODE_CONNECTED && candidate->count_modes > 0) {
             connector = candidate;
             break;
         }

@@ -2,9 +2,7 @@
 
 EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev)
 {
-    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay =
-        (PFNEGLGETPLATFORMDISPLAYEXTPROC)
-        eglGetProcAddress("eglGetPlatformDisplayEXT");
+    PFNEGLGETPLATFORMDISPLAYEXTPROC getPlatformDisplay =(PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
 
     if (!getPlatformDisplay) {
         return EGL_NO_DISPLAY;

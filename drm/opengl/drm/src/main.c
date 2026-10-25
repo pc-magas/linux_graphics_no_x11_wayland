@@ -80,21 +80,20 @@ int main(void)
 
     puts("Initiaslize context \n");
     EGLContext egl_context = initEGLContext(egl_display,config);
-    eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
-    uint32_t conn_id = connector->connector_id;
-    uint32_t crtc_id = crtc->crtc_id;
-    
     puts("Init program\n");
     GLuint program = createProgram();
     if (!program) {
         return 1;
     }
-     
+
+    uint32_t conn_id = connector->connector_id;
+    uint32_t crtc_id = crtc->crtc_id;     
     DisplayFrame current = {0};
 
     puts("Draw Square\n");
 
+    eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
     drawSquare(program, mode_w,mode_h);
     eglSwapBuffers(egl_display, egl_surface);
         
