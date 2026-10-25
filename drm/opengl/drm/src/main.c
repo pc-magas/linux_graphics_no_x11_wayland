@@ -108,6 +108,11 @@ int main(void)
         puts("Lock buffers");
         struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
 
+        if (!bo) {
+            fprintf(stderr, "gbm_surface_lock_front_buffer failed\n");
+            break;
+        }
+
         puts("Set CRTC\n");
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
