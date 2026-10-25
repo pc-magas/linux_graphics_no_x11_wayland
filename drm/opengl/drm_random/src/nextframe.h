@@ -10,14 +10,8 @@ typedef struct {
     uint32_t fb_id;
 } DisplayFrame;
 
-int displayFirstFrame(
-    int drm_fd,
-    struct gbm_surface *surface,
-    uint32_t crtc_id,
-    uint32_t conn_id,
-    const drmModeModeInfo *mode,
-    DisplayFrame *current
-);
+int displayFirstFrame(int drm_fd, struct gbm_surface *surface, uint32_t crtc_id, uint32_t conn_id, drmModeModeInfo *mode, DisplayFrame *current );
+
 
 int displayNextFrame(
     int drm_fd,

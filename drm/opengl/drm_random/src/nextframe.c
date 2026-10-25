@@ -28,7 +28,7 @@ static int createFramebuffer(int drm_fd, struct gbm_bo *bo, uint32_t *fb_id)
 }
 
 
-int displayFirstFrame(int drm_fd, struct gbm_surface *surface,uint32_t crtc_id,uint32_t conn_id,drmModeModeInfo *mode,DisplayFrame *current)
+int displayFirstFrame(int drm_fd, struct gbm_surface *surface, uint32_t crtc_id, uint32_t conn_id, drmModeModeInfo *mode, DisplayFrame *current )
 {
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(surface);
 
