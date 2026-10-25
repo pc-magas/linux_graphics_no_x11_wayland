@@ -110,7 +110,7 @@ int main(void)
     puts("Set CRTC");
 
     fb_id =  gbm_bo_get_handle(bo).u32;
-    ret = drmModeSetCrtc(
+    int ret = drmModeSetCrtc(
             drm_fd,
             crtc_id,
             fb_id,
