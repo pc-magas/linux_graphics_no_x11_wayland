@@ -96,6 +96,7 @@ int main(void)
     uint32_t conn_id = connector->connector_id;
     uint32_t crtc_id = crtc->crtc_id;     
     DisplayFrame current = {0};
+    int firstFrame = 0;
 
     srand((unsigned int)time(NULL));
 
@@ -104,8 +105,14 @@ int main(void)
     while(true){
         drawSquare(program, mode_w,mode_h);
         eglSwapBuffers(egl_display, egl_surface);
-            
-        if (displayNextFrame( drm_fd, gbm_surf, crtc_id, conn_id, &current) != 0) {
+        
+        if(firstFrame == 0){
+            displayFirstFrame(drm_fd, gbm_surf, crtc_id, conn_id, &mode, &current);
+            firstFrame=1;
+            continue;
+        }
+        
+        if (displayNextFrame( drm_fd, gbm_surf, crtc_id, &current) != 0) {
             fprintf(stderr, "Display refresh failed\n");
             break;
         }
