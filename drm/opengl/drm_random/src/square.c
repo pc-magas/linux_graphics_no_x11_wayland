@@ -86,6 +86,16 @@ void drawSquare(GLuint program, int width, int height)
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(program);
+
+    GLint colorLocation = glGetUniformLocation(program, "uColor");
+
+    glUniform3f(
+        colorLocation,
+        randomFloat(),
+        randomFloat(),
+        randomFloat()
+    );
+    
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
