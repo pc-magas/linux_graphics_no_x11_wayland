@@ -86,7 +86,6 @@ int main(void)
         return 1;
     }
 
-    uint32_t fb_id = 0;
     conn_id = connector->connector_id;
     crtc_id = crtc->crtc_id;
     drmModeModeInfo mode = connector->modes[0];
