@@ -26,8 +26,9 @@ GLuint createColorShader()
     const char *fs =
         "#version 100\n"
         "precision mediump float;\n"
+        "uniform vec3 uColor;\n"
         "void main() {\n"
-        "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
+        "    gl_FragColor = vec4(uColor, 1.0);\n"
         "}\n";
 
     return createShader(GL_FRAGMENT_SHADER, fs);
