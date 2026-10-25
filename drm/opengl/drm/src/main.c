@@ -105,65 +105,7 @@ int main(void)
         
     puts("Lock buffers");
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-
-   if (!bo) {
-        fprintf(stderr, "Failed to lock GBM buffer\n");
-        return 1;
-    }
-
-    uint32_t fb_id = 0;
-
-    uint32_t handles[4] = {0};
-    uint32_t pitches[4] = {0};
-    uint32_t offsets[4] = {0};
-
-    uint32_t format = gbm_bo_get_format(bo);
-
-    handles[0] = gbm_bo_get_handle(bo).u32;
-    pitches[0] = gbm_bo_get_stride(bo);
-
-    printf("Format: 0x%08x\n", format);
-    printf("Width: %u\n", gbm_bo_get_width(bo));
-    printf("Height: %u\n", gbm_bo_get_height(bo));
-    printf("Stride: %u\n", pitches[0]);
-
-    int ret = drmModeAddFB2(
-        drm_fd,
-        gbm_bo_get_width(bo),
-        gbm_bo_get_height(bo),
-        format,
-        handles,
-        pitches,
-        offsets,
-        &fb_id,
-        0
-    );
-
-    if (ret != 0) {
-        perror("drmModeAddFB2");
-        gbm_surface_release_buffer(gbm_surf, bo);
-        return 1;
-    }
-
-    printf("Framebuffer ID: %u\n", fb_id);
-
-    ret = drmModeSetCrtc(
-        drm_fd,
-        crtc_id,
-        fb_id,
-        0,
-        0,
-        &conn_id,
-        1,
-        &mode
-    );
-
-    if (ret != 0) {
-        perror("drmModeSetCrtc");
-        drmModeRmFB(drm_fd, fb_id);
-        gbm_surface_release_buffer(gbm_surf, bo);
-        return 1;
-    }
+    drmModeSetCrtc(drm_fd, res->crtcs[0], gbm_bo_get_handle(bo).u32, 0, 0,  &conn->connector_id, 1, mode);  
 
     puts("Framebuffer displayed");
 
