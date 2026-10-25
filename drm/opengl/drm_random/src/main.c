@@ -116,6 +116,8 @@ int main(void)
             fprintf(stderr, "Display refresh failed\n");
             break;
         }
+
+        sleep(5);
     }
 
     eglDestroySurface(egl_display, egl_surface);  
