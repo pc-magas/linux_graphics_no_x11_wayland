@@ -22,15 +22,17 @@ int main(void)
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
     struct gbm_device *gbm_dev = gbm_create_device(drm_fd);  
     
-    EGLDisplay gbm_display;
-    EGLSurface gbm_surface;
-    EGLContext gbm_context;
+    struct gbm_surface *gbm_surf;
+
+    EGLDisplay egl_display;
+    EGLSurface egl_surface;
+    EGLContext egl_context;
 
     uint32_t conn_id,crtc_id;
 
-    gbm_display = initEGLDisplay(gbm_dev);
+    egl_display = initEGLDisplay(gbm_dev);
 
-    if(gbm_display == EGL_NO_DISPLAY){
+    if(egl_display == EGL_NO_DISPLAY){
         fprintf(stderr,"Unable to Initialize display");
         return 1;
     }
@@ -47,12 +49,13 @@ int main(void)
         EGL_NONE
     };
 
-    eglChooseConfig(gbm_display, config_attribs, &config, 1, &num_configs);  
+    eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
-    gbm_surface = initEGLSurface(gbm_dev,gbm_display,config,WIDTH,HEIGHT); 
-    gbm_context = initEGLContext(gbm_display,config);
+    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT,gbm_surface);
+    egl_context = initEGLContext(egl_display,config);
 
-    eglMakeCurrent(gbm_display, gbm_surface, gbm_surface, gbm_context);  
+
+    eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
     drmModeConnector *connector = getDRMConnector(drm_fd);
     if (!connector) {
@@ -80,15 +83,15 @@ int main(void)
 
     while (true) {
         drawSquare(program, WIDTH, HEIGHT);
-        eglSwapBuffers(gbm_display, gbm_surface);
+        eglSwapBuffers(egl_display, egl_surface);
 
-        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surface);  
+        struct gbm_bo *bo = egl_surface_lock_front_buffer(egl_surface);  
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
 
-    eglDestroySurface(gbm_display, gbm_surface);  
-    eglDestroyContext(gbm_display, gbm_context);  
-    eglTerminate(gbm_display);  
+    eglDestroySurface(egl_display, egl_surface);  
+    eglDestroyContext(egl_display, egl_context);  
+    eglTerminate(egl_display);  
     gbm_device_destroy(gbm_dev);  
     close(drm_fd);
 
