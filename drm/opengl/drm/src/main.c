@@ -51,7 +51,7 @@ int main(void)
 
     eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
-    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT,gbm_surf);
+    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT, &gbm_surf);
 
     if (egl_surface == EGL_NO_SURFACE) {
         fprintf(stderr, "Failed to create EGL surface\n");

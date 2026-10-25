@@ -14,7 +14,7 @@
 
 EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev);
 
-EGLSurface initEGLSurface(struct gbm_device *gbm_dev,EGLDisplay display, EGLConfig config, unsigned int width, unsigned int height, struct gbm_surface *gbm_surf );
+EGLSurface initEGLSurface(struct gbm_device *gbm_dev,EGLDisplay display, EGLConfig config, unsigned int width, unsigned int height, struct gbm_surface **gbm_surf );
 
 EGLContext initEGLContext(EGLDisplay display,EGLConfig config);
 
