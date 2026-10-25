@@ -17,6 +17,39 @@
 #include "nextframe.h"
 
 
+void cleanup(
+    EGLDisplay egl_display,
+    EGLSurface egl_surface,
+    EGLContext egl_context,
+    struct gbm_device *gbm_dev,
+    struct gbm_surface *gbm_surf,
+    drmModeConnector *connector,
+    drmModeCrtc *crtc,
+    GLuint program,
+    int drm_fd)
+{
+    if (program){
+        glDeleteProgram(program);
+    }
+
+    if (egl_display != EGL_NO_DISPLAY) {
+        eglMakeCurrent(egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        if (egl_surface != EGL_NO_SURFACE) eglDestroySurface(egl_display, egl_surface);
+        if (egl_context != EGL_NO_CONTEXT) eglDestroyContext(egl_display, egl_context);
+        eglTerminate(egl_display);
+    }
+
+    if (gbm_surf) gbm_surface_destroy(gbm_surf);
+
+    if (gbm_dev) gbm_device_destroy(gbm_dev);
+
+    if (crtc) drmModeFreeCrtc(crtc);
+
+    if (connector) drmModeFreeConnector(connector);
+
+    if (drm_fd >= 0) close(drm_fd);
+}
+
 int main(void)
 {
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
@@ -107,24 +140,25 @@ int main(void)
         eglSwapBuffers(egl_display, egl_surface);
         
         if(firstFrame == 0){
-            displayFirstFrame(drm_fd, gbm_surf, crtc_id, conn_id, &mode, &current);
+            int firstframeNotShown = displayFirstFrame(drm_fd, gbm_surf, crtc_id, conn_id, &mode, &current);
+            if(firstframeNotShown){
+                cleanup(egl_display, egl_surface, egl_context,gbm_dev, gbm_surf, connector, crtc,program, drm_fd);
+                return 1;
+            }
             firstFrame=1;
             continue;
         }
         
         if (displayNextFrame( drm_fd, gbm_surf, crtc_id, &current) != 0) {
             fprintf(stderr, "Display refresh failed\n");
-            break;
+            cleanup(egl_display, egl_surface, egl_context,gbm_dev, gbm_surf, connector, crtc,program, drm_fd);
+            return 1;
         }
 
         sleep(5);
     }
 
-    eglDestroySurface(egl_display, egl_surface);  
-    eglDestroyContext(egl_display, egl_context);  
-    eglTerminate(egl_display);  
-    gbm_device_destroy(gbm_dev);  
-    close(drm_fd);
+    cleanup(egl_display, egl_surface, egl_context,gbm_dev, gbm_surf, connector, crtc,program, drm_fd);
 
     return 0;
 }
