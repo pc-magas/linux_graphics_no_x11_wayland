@@ -37,6 +37,7 @@ int main(void)
     unsigned int mode_h = mode.vdisplay;
 
     puts("Get CRTC\n");
+
     drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
     if (!crtc) {
         fprintf(stderr, "No compatible CRTC found\n");
@@ -45,9 +46,9 @@ int main(void)
         return 1;
     }
 
-    puts("Initiaslize display \n");
+    puts("Initiaslize GBM display");
+    
     EGLDisplay egl_display = initEGLDisplay(gbm_dev);
-
     if(egl_display == EGL_NO_DISPLAY){
         fprintf(stderr,"Unable to Initialize EGL display");
         return 1;
@@ -84,7 +85,6 @@ int main(void)
     EGLContext egl_context = initEGLContext(egl_display,config);
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
-
     uint32_t conn_id = connector->connector_id;
     uint32_t crtc_id = crtc->crtc_id;
     
@@ -94,43 +94,21 @@ int main(void)
         return 1;
     }
      
+    DisplayFrame current = {0};
+
     puts("Draw Square\n");
 
     drawSquare(program, mode_w,mode_h);
-
-    puts("Swap Buffers\n");
     eglSwapBuffers(egl_display, egl_surface);
         
-    puts("Lock buffers"); 
-    struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-    if (!bo) {
-        fprintf(stderr, "Failed to lock front buffer\n");
-        return 1;
-    }
-
-    uint32_t handle = gbm_bo_get_handle(bo).u32;
-    uint32_t pitch  = gbm_bo_get_stride(bo);
-    uint32_t fb_id  = 0;
-
-    int ret = drmModeAddFB(drm_fd, mode_w, mode_h, 24, 32, pitch, handle, &fb_id);
-    if (ret) {
-        perror("drmModeAddFB");
-        return 1;
-    }
-
-    puts("Set CRTC");
-    ret = drmModeSetCrtc(drm_fd, crtc_id, fb_id, 0, 0, &conn_id, 1, &mode);
-    if (ret) {
-        perror("drmModeSetCrtc");
-        drmModeRmFB(drm_fd, fb_id);
-        gbm_surface_release_buffer(gbm_surf, bo);
+    if (displayRefresh( drm_fd, gbm_surf, crtc_id, conn_id, &mode, &current) != 0) {
+        fprintf(stderr, "Display refresh failed\n");
         return 1;
     }
 
     puts("Framebuffer displayed");
     sleep(10);
 
-    
     puts("Cleanup\n");
 
     eglDestroySurface(egl_display, egl_surface);  
