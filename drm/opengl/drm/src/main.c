@@ -23,8 +23,6 @@ int main(void)
 
     EGLContext egl_context;
 
-    uint32_t conn_id,crtc_id;
-
     puts("Get Connector \n");
     drmModeConnector *connector = getDRMConnector(drm_fd);
     if (!connector) {
