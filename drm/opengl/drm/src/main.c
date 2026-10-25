@@ -86,8 +86,6 @@ int main(void)
         return 1;
     }
 
-    conn_id = connector->connector_id;
-    crtc_id = crtc->crtc_id;
     drmModeModeInfo mode = connector->modes[0];
 
     puts("Init program\n");
@@ -105,7 +103,7 @@ int main(void)
         
     puts("Lock buffers");
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-    drmModeSetCrtc(drm_fd, res->crtcs[0], gbm_bo_get_handle(bo).u32, 0, 0,  &conn->connector_id, 1, mode);  
+    drmModeSetCrtc(drm_fd, res->crtcs[0], gbm_bo_get_handle(bo).u32, 0, 0,  &connector->connector_id, 1, mode);  
 
     puts("Framebuffer displayed");
 
