@@ -99,76 +99,89 @@ int main(void)
     struct gbm_bo *previous_bo = NULL;
     uint32_t previous_fb_id = 0;
 
-    while (true) {
+    
+    puts("Draw Square\n");
 
-        puts("Draw Square\n");
+    drawSquare(program, WIDTH, HEIGHT);
 
-        drawSquare(program, WIDTH, HEIGHT);
-
-        puts("Swap Buffers\n");
-        eglSwapBuffers(egl_display, egl_surface);
+    puts("Swap Buffers\n");
+    eglSwapBuffers(egl_display, egl_surface);
         
-        puts("Lock buffers");
-        struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
+    puts("Lock buffers");
+    struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
 
-        if (!bo) {
-            fprintf(stderr, "gbm_surface_lock_front_buffer failed\n");
-            break;
-        }
+    sleep(5);
 
-        uint32_t fb_id = 0;
+    // while (true) {
 
-        // Register GBM buffer as a DRM framebuffer
-        int ret = drmModeAddFB(
-            drm_fd,
-            gbm_bo_get_width(bo),
-            gbm_bo_get_height(bo),
-            24,
-            32,
-            gbm_bo_get_stride(bo),
-            gbm_bo_get_handle(bo).u32,
-            &fb_id
-        );
+    //     puts("Draw Square\n");
 
-        if (ret != 0) {
-            perror("drmModeAddFB");
-            gbm_surface_release_buffer(gbm_surf, bo);
-            break;
-        }
+    //     drawSquare(program, WIDTH, HEIGHT);
 
-        printf("GBM handle: %u\n", gbm_bo_get_handle(bo).u32);
-        printf("DRM framebuffer ID: %u\n", fb_id);
+    //     puts("Swap Buffers\n");
+    //     eglSwapBuffers(egl_display, egl_surface);
+        
+    //     puts("Lock buffers");
+    //     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
 
-        puts("Set CRTC");
+    //     if (!bo) {
+    //         fprintf(stderr, "gbm_surface_lock_front_buffer failed\n");
+    //         break;
+    //     }
 
-        ret = drmModeSetCrtc(
-            drm_fd,
-            crtc_id,
-            fb_id,
-            0,
-            0,
-            &conn_id,
-            1,
-            &mode
-        );
+    //     uint32_t fb_id = 0;
 
-        if (ret != 0) {
-            perror("drmModeSetCrtc");
-            drmModeRmFB(drm_fd, fb_id);
-            gbm_surface_release_buffer(gbm_surf, bo);
-            break;
-        }
+    //     // Register GBM buffer as a DRM framebuffer
+    //     int ret = drmModeAddFB(
+    //         drm_fd,
+    //         gbm_bo_get_width(bo),
+    //         gbm_bo_get_height(bo),
+    //         24,
+    //         32,
+    //         gbm_bo_get_stride(bo),
+    //         gbm_bo_get_handle(bo).u32,
+    //         &fb_id
+    //     );
 
-        // Previous framebuffer is no longer scanned out
-        // by this CRTC after successful modeset.
-        if (previous_bo) {
-            drmModeRmFB(drm_fd, previous_fb_id);
-            gbm_surface_release_buffer(gbm_surf, previous_bo);
-        }
+    //     if (ret != 0) {
+    //         perror("drmModeAddFB");
+    //         gbm_surface_release_buffer(gbm_surf, bo);
+    //         break;
+    //     }
 
-        previous_bo = bo;
-        previous_fb_id = fb_id;
-    }
+    //     printf("GBM handle: %u\n", gbm_bo_get_handle(bo).u32);
+    //     printf("DRM framebuffer ID: %u\n", fb_id);
+
+    //     puts("Set CRTC");
+
+    //     ret = drmModeSetCrtc(
+    //         drm_fd,
+    //         crtc_id,
+    //         fb_id,
+    //         0,
+    //         0,
+    //         &conn_id,
+    //         1,
+    //         &mode
+    //     );
+
+    //     if (ret != 0) {
+    //         perror("drmModeSetCrtc");
+    //         drmModeRmFB(drm_fd, fb_id);
+    //         gbm_surface_release_buffer(gbm_surf, bo);
+    //         break;
+    //     }
+
+    //     // Previous framebuffer is no longer scanned out
+    //     // by this CRTC after successful modeset.
+    //     if (previous_bo) {
+    //         drmModeRmFB(drm_fd, previous_fb_id);
+    //         gbm_surface_release_buffer(gbm_surf, previous_bo);
+    //     }
+
+    //     previous_bo = bo;
+    //     previous_fb_id = fb_id;
+    // }
 
     puts("Cleanup\n");
 
