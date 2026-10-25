@@ -18,9 +18,4 @@ EGLSurface initEGLSurface(struct gbm_device *gbm_dev,EGLDisplay display, EGLConf
 
 EGLContext initEGLContext(EGLDisplay display,EGLConfig config);
 
-drmModeConnector *getDRMConnector(int drm_fd);
-drmModeCrtc *getDRMCrtc(int drm_fd,drmModeConnector *connector);
-
-
-
 #endif
