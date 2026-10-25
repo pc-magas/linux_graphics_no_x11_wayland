@@ -104,24 +104,26 @@ int main(void)
     puts("Swap Buffers\n");
     eglSwapBuffers(egl_display, egl_surface);
         
-    puts("Lock buffers");
+    puts("Lock buffers"); 
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-    
+    if (!bo) {
+        fprintf(stderr, "Failed to lock front buffer\n");
+        return 1;
+    }
+
+    uint32_t handle = gbm_bo_get_handle(bo).u32;
+    uint32_t pitch  = gbm_bo_get_stride(bo);
+    uint32_t fb_id  = 0;
+
+    int ret = drmModeAddFB(drm_fd, WIDTH, HEIGHT, 24, 32, pitch, handle, &fb_id);
+    if (ret) {
+        perror("drmModeAddFB");
+        return 1;
+    }
+
     puts("Set CRTC");
-
-    fb_id =  gbm_bo_get_handle(bo).u32;
-    int ret = drmModeSetCrtc(
-            drm_fd,
-            crtc_id,
-            fb_id,
-            0,
-            0,
-            &conn_id,
-            1,
-            &mode
-        );
-
-    if (ret != 0) {
+    ret = drmModeSetCrtc(drm_fd, crtc_id, fb_id, 0, 0, &conn_id, 1, &mode);
+    if (ret) {
         perror("drmModeSetCrtc");
         drmModeRmFB(drm_fd, fb_id);
         gbm_surface_release_buffer(gbm_surf, bo);
@@ -131,81 +133,7 @@ int main(void)
     puts("Framebuffer displayed");
     sleep(10);
 
-    // struct gbm_bo *previous_bo = NULL;
-    // uint32_t previous_fb_id = 0;
-
-   
-    // while (true) {
-
-    //     puts("Draw Square\n");
-
-    //     drawSquare(program, WIDTH, HEIGHT);
-
-    //     puts("Swap Buffers\n");
-    //     eglSwapBuffers(egl_display, egl_surface);
-        
-    //     puts("Lock buffers");
-    //     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-
-    //     if (!bo) {
-    //         fprintf(stderr, "gbm_surface_lock_front_buffer failed\n");
-    //         break;
-    //     }
-
-    //     uint32_t fb_id = 0;
-
-    //     // Register GBM buffer as a DRM framebuffer
-    //     int ret = drmModeAddFB(
-    //         drm_fd,
-    //         gbm_bo_get_width(bo),
-    //         gbm_bo_get_height(bo),
-    //         24,
-    //         32,
-    //         gbm_bo_get_stride(bo),
-    //         gbm_bo_get_handle(bo).u32,
-    //         &fb_id
-    //     );
-
-    //     if (ret != 0) {
-    //         perror("drmModeAddFB");
-    //         gbm_surface_release_buffer(gbm_surf, bo);
-    //         break;
-    //     }
-
-    //     printf("GBM handle: %u\n", gbm_bo_get_handle(bo).u32);
-    //     printf("DRM framebuffer ID: %u\n", fb_id);
-
-    //     puts("Set CRTC");
-
-    //     ret = drmModeSetCrtc(
-    //         drm_fd,
-    //         crtc_id,
-    //         fb_id,
-    //         0,
-    //         0,
-    //         &conn_id,
-    //         1,
-    //         &mode
-    //     );
-
-    //     if (ret != 0) {
-    //         perror("drmModeSetCrtc");
-    //         drmModeRmFB(drm_fd, fb_id);
-    //         gbm_surface_release_buffer(gbm_surf, bo);
-    //         break;
-    //     }
-
-    //     // Previous framebuffer is no longer scanned out
-    //     // by this CRTC after successful modeset.
-    //     if (previous_bo) {
-    //         drmModeRmFB(drm_fd, previous_fb_id);
-    //         gbm_surface_release_buffer(gbm_surf, previous_bo);
-    //     }
-
-    //     previous_bo = bo;
-    //     previous_fb_id = fb_id;
-    // }
-
+    
     puts("Cleanup\n");
 
     eglDestroySurface(egl_display, egl_surface);  
