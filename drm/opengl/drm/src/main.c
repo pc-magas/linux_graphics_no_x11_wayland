@@ -96,10 +96,7 @@ int main(void)
         return 1;
     }
 
-    struct gbm_bo *previous_bo = NULL;
-    uint32_t previous_fb_id = 0;
-
-    
+     
     puts("Draw Square\n");
 
     drawSquare(program, WIDTH, HEIGHT);
@@ -110,8 +107,13 @@ int main(void)
     puts("Lock buffers");
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
 
-    sleep(5);
+    sleep(10);
 
+
+    // struct gbm_bo *previous_bo = NULL;
+    // uint32_t previous_fb_id = 0;
+
+   
     // while (true) {
 
     //     puts("Draw Square\n");
