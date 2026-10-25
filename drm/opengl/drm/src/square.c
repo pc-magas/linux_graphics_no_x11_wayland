@@ -21,19 +21,7 @@ GLuint createShader(GLenum type, const char *source)
     return shader;
 }
 
-GLuint crateShader()
-{
-    const char *fs =
-        "#version 100\n"
-        "precision mediump float;\n"
-        "void main() {\n"
-        "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
-
-    return createShader(GL_FRAGMENT_SHADER, fs)
-}
-
-GLuint createProgram(GLuint f)
+GLuint createProgram(void)
 {
     const char *vs =
         "#version 100\n"
@@ -50,7 +38,7 @@ GLuint createProgram(GLuint f)
         "}\n";
 
     GLuint v = createShader(GL_VERTEX_SHADER, vs);
-
+    GLuint f = createShader(GL_FRAGMENT_SHADER, fs);
     if (!v || !f) {
         if (v) glDeleteShader(v);
         if (f) glDeleteShader(f);
