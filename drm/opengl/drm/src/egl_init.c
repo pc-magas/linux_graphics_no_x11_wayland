@@ -1,5 +1,5 @@
 
-#include "drm_init.h"
+#include "egl_init.h"
 
 
 EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev)

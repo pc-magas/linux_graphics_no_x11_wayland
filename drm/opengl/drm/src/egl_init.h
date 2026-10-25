@@ -3,7 +3,6 @@
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>  
-#include <stddef.h>
 #include <gbm.h>
 
 // DRM Headers
