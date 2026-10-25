@@ -22,7 +22,7 @@ int main(void)
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
     struct gbm_device *gbm_dev = gbm_create_device(drm_fd);  
     
-    struct gbm_surface *gbm_surf;
+    struct gbm_surface *gbm_surf=NULL;
 
     EGLDisplay egl_display;
     EGLSurface egl_surface;
@@ -51,7 +51,13 @@ int main(void)
 
     eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
-    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT,gbm_surface);
+    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT,gbm_surf);
+
+    if (egl_surface == EGL_NO_SURFACE || !gbm_surf) {
+        fprintf(stderr, "Failed to create EGL/GBM surface\n");
+        return 1;
+    }
+
     egl_context = initEGLContext(egl_display,config);
 
 
