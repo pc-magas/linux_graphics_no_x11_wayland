@@ -30,6 +30,28 @@ int main(void)
 
     uint32_t conn_id,crtc_id;
 
+    puts("Get Connector \n");
+    drmModeConnector *connector = getDRMConnector(drm_fd);
+    if (!connector) {
+        fprintf(stderr, "No connected DRM connector found\n");
+        close(drm_fd);
+        return 1;
+    }
+
+    drmModeModeInfo mode = connector->modes[0];
+
+    unsigned int mode_w = mode.hdisplay;
+    unsigned int mode_h = mode.vdisplay;
+
+    puts("Get CRTC\n");
+    drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
+    if (!crtc) {
+        fprintf(stderr, "No compatible CRTC found\n");
+        drmModeFreeConnector(connector);
+        close(drm_fd);
+        return 1;
+    }
+
     puts("Initiaslize display \n");
     egl_display = initEGLDisplay(gbm_dev);
 
@@ -53,7 +75,7 @@ int main(void)
     eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
     puts("Initiaslize surface \n");
-    egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT, &gbm_surf);
+    egl_surface = initEGLSurface(gbm_dev,egl_display,config,mode_w,mode_h, &gbm_surf);
 
     if (egl_surface == EGL_NO_SURFACE) {
         fprintf(stderr, "Failed to create EGL surface\n");
@@ -69,26 +91,11 @@ int main(void)
     egl_context = initEGLContext(egl_display,config);
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
-    puts("Get Connector \n");
-    drmModeConnector *connector = getDRMConnector(drm_fd);
-    if (!connector) {
-        fprintf(stderr, "No connected DRM connector found\n");
-        close(drm_fd);
-        return 1;
-    }
 
-    puts("Get CRTC\n");
-    drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
-    if (!crtc) {
-        fprintf(stderr, "No compatible CRTC found\n");
-        drmModeFreeConnector(connector);
-        close(drm_fd);
-        return 1;
-    }
+
 
     conn_id = connector->connector_id;
     crtc_id = crtc->crtc_id;
-    drmModeModeInfo mode = connector->modes[0];
     
     puts("Init program\n");
     GLuint program = createProgram();
@@ -98,7 +105,7 @@ int main(void)
      
     puts("Draw Square\n");
 
-    drawSquare(program, WIDTH, HEIGHT);
+    drawSquare(program, mode_w,mode_h);
 
     puts("Swap Buffers\n");
     eglSwapBuffers(egl_display, egl_surface);
@@ -114,7 +121,7 @@ int main(void)
     uint32_t pitch  = gbm_bo_get_stride(bo);
     uint32_t fb_id  = 0;
 
-    int ret = drmModeAddFB(drm_fd, WIDTH, HEIGHT, 24, 32, pitch, handle, &fb_id);
+    int ret = drmModeAddFB(drm_fd, mode_w,mode_h, 24, 32, pitch, handle, &fb_id);
     if (ret) {
         perror("drmModeAddFB");
         return 1;
