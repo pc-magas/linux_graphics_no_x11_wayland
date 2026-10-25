@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <gbm.h>
 
+// DRM Headers
+#include <xf86drm.h>
+
 
 // Define EGL extensions (if not in headers)  
 #define EGL_PLATFORM_GBM_KHR 0x31D7
