@@ -26,6 +26,8 @@ int main(void)
     EGLSurface gbm_surface;
     EGLContext gbm_context;
 
+    uint32_t conn_id,crtc_id;
+
     gbm_display = initEGLDisplay(gbm_dev);
 
     if(gbm_display == EGL_NO_DISPLAY){
@@ -67,8 +69,9 @@ int main(void)
         return 1;
     }
 
-    uint32_t conn_id = connector->connector_id;
-    uint32_t crtc_id = crtc->crtc_id;
+    conn_id = connector->connector_id;
+    crtc_id = crtc->crtc_id;
+    drmModeModeInfo mode = connector->modes[0];
 
     GLuint program = createProgram();
     if (!program) {
