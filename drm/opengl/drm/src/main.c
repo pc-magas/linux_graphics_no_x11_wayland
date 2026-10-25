@@ -33,7 +33,7 @@ int main(void)
     egl_display = initEGLDisplay(gbm_dev);
 
     if(egl_display == EGL_NO_DISPLAY){
-        fprintf(stderr,"Unable to Initialize display");
+        fprintf(stderr,"Unable to Initialize EGL display");
         return 1;
     }
 
@@ -53,8 +53,13 @@ int main(void)
 
     egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT,gbm_surf);
 
-    if (egl_surface == EGL_NO_SURFACE || !gbm_surf) {
-        fprintf(stderr, "Failed to create EGL/GBM surface\n");
+    if (egl_surface == EGL_NO_SURFACE) {
+        fprintf(stderr, "Failed to create EGL surface\n");
+        return 1;
+    }
+
+    if (!gbm_surf) {
+        fprintf(stderr, "Failed to create GBM surface\n");
         return 1;
     }
 
