@@ -30,7 +30,7 @@ GLuint createColorShader()
         "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
         "}\n";
 
-    return createShader(GL_FRAGMENT_SHADER, fs)
+    return createShader(GL_FRAGMENT_SHADER, fs);
 }
 
 GLuint createProgram(GLuint f)
@@ -40,13 +40,6 @@ GLuint createProgram(GLuint f)
         "attribute vec2 position;\n"
         "void main() {\n"
         "    gl_Position = vec4(position, 0.0, 1.0);\n"
-        "}\n";
-
-    const char *fs =
-        "#version 100\n"
-        "precision mediump float;\n"
-        "void main() {\n"
-        "    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
         "}\n";
 
     GLuint v = createShader(GL_VERTEX_SHADER, vs);
