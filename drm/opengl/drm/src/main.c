@@ -30,6 +30,7 @@ int main(void)
 
     uint32_t conn_id,crtc_id;
 
+    puts("Initiaslize display \n");
     egl_display = initEGLDisplay(gbm_dev);
 
     if(egl_display == EGL_NO_DISPLAY){
@@ -51,6 +52,7 @@ int main(void)
 
     eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
+    puts("Initiaslize surface \n");
     egl_surface = initEGLSurface(gbm_dev,egl_display,config,WIDTH,HEIGHT, &gbm_surf);
 
     if (egl_surface == EGL_NO_SURFACE) {
@@ -63,11 +65,11 @@ int main(void)
         return 1;
     }
 
+    puts("Initiaslize context \n");
     egl_context = initEGLContext(egl_display,config);
-
-
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
+    puts("Get Connector \n");
     drmModeConnector *connector = getDRMConnector(drm_fd);
     if (!connector) {
         fprintf(stderr, "No connected DRM connector found\n");
@@ -75,6 +77,7 @@ int main(void)
         return 1;
     }
 
+    puts("Get CRTC\n");
     drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
     if (!crtc) {
         fprintf(stderr, "No compatible CRTC found\n");
@@ -87,18 +90,29 @@ int main(void)
     crtc_id = crtc->crtc_id;
     drmModeModeInfo mode = connector->modes[0];
 
+    puts("Init program\n");
     GLuint program = createProgram();
     if (!program) {
         return 1;
     }
 
     while (true) {
-        drawSquare(program, WIDTH, HEIGHT);
-        eglSwapBuffers(egl_display, egl_surface);
 
-        struct gbm_bo *bo = gbm_surface_lock_front_buffer(egl_surface);  
+        puts("Draw Square\n");
+
+        drawSquare(program, WIDTH, HEIGHT);
+
+        puts("Swap Buffers\n");
+        eglSwapBuffers(egl_display, egl_surface);
+        
+        puts("Lock buffers");
+        struct gbm_bo *bo = gbm_surface_lock_front_buffer(egl_surface);
+
+        puts("Set CRTC\n");
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
+
+    puts("Cleanup\n");
 
     eglDestroySurface(egl_display, egl_surface);  
     eglDestroyContext(egl_display, egl_context);  
