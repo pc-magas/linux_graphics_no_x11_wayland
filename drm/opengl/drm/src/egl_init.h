@@ -1,7 +1,7 @@
 #ifndef EGL_INIT_H
 #define EGL_INIT_H
 
-#include <EGL/egl.h>  
+#include <EGL/egl.h>
 #include <EGL/eglext.h>  
 #include <stddef.h>
 #include <gbm.h>
