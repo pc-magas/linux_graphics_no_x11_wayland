@@ -95,7 +95,6 @@ int main(void)
     if (!program) {
         return 1;
     }
-
      
     puts("Draw Square\n");
 
@@ -106,6 +105,16 @@ int main(void)
         
     puts("Lock buffers");
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
+
+    ret = drmModeSetCrtc(drm_fd,crtc_id,fb_id,0,0,&conn_id,1,&mode);
+
+    if (ret != 0) {
+        perror("drmModeSetCrtc");
+        drmModeRmFB(drm_fd, fb_id);
+        gbm_surface_release_buffer(gbm_surf, bo);
+        return 1;
+    }
+
 
     sleep(10);
 
