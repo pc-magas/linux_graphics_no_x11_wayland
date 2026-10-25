@@ -11,6 +11,7 @@
 
 
 #include "square.h"
+#include "egl_init.h"
 #include "drm_init.h"
 
 #define WIDTH 1920
@@ -65,6 +66,9 @@ int main(void)
         close(drm_fd);
         return 1;
     }
+
+    uint32_t conn_id = connector->connector_id;
+    uint32_t crtc_id = crtc->crtc_id;
 
     GLuint program = createProgram();
     if (!program) {
