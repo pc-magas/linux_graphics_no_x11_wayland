@@ -91,7 +91,7 @@ int main(void)
         drawSquare(program, WIDTH, HEIGHT);
         eglSwapBuffers(egl_display, egl_surface);
 
-        struct gbm_bo *bo = egl_surface_lock_front_buffer(egl_surface);  
+        struct gbm_bo *bo = gbm_surface_lock_front_buffer(egl_surface);  
         drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
     }
 
