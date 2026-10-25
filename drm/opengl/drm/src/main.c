@@ -86,8 +86,10 @@ int main(void)
         return 1;
     }
 
+    conn_id = connector->connector_id;
+    crtc_id = crtc->crtc_id;
     drmModeModeInfo mode = connector->modes[0];
-
+    
     puts("Init program\n");
     GLuint program = createProgram();
     if (!program) {
@@ -103,10 +105,28 @@ int main(void)
         
     puts("Lock buffers");
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
-    drmModeSetCrtc(drm_fd, res->crtcs[0], gbm_bo_get_handle(bo).u32, 0, 0,  &connector->connector_id, 1, mode);  
+    
+    puts("Set CRTC");
+
+    ret = drmModeSetCrtc(
+            drm_fd,
+            crtc_id,
+            fb_id,
+            0,
+            0,
+            &conn_id,
+            1,
+            &mode
+        );
+
+    if (ret != 0) {
+        perror("drmModeSetCrtc");
+        drmModeRmFB(drm_fd, fb_id);
+        gbm_surface_release_buffer(gbm_surf, bo);
+        return 1;
+    }
 
     puts("Framebuffer displayed");
-
     sleep(10);
 
     // struct gbm_bo *previous_bo = NULL;
