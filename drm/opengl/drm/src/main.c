@@ -8,7 +8,7 @@
 #include <drm.h>  
 #include <drm_mode.h>  
 #include <gbm.h>
-
+#include <xf86drm.h>
 
 #include "square.h"
 #include "egl_init.h"
