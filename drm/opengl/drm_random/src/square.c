@@ -91,11 +91,11 @@ void drawSquare(GLuint program, int width, int height)
 
     glUniform3f(
         colorLocation,
-        randomFloat(),
-        randomFloat(),
-        randomFloat()
+        (float)rand() / (float)RAND_MAX,
+        (float)rand() / (float)RAND_MAX,
+        (float)rand() / (float)RAND_MAX
     );
-    
+
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);

@@ -13,6 +13,9 @@
 #include "square.h"
 #include "egl_init.h"
 #include "drm_init.h"
+#include <time.h>
+
+
 
 int main(void)
 {
@@ -93,6 +96,10 @@ int main(void)
     uint32_t conn_id = connector->connector_id;
     uint32_t crtc_id = crtc->crtc_id;     
     DisplayFrame current = {0};
+
+    srand((unsigned int)time(NULL));
+
+    
 
     puts("Draw Square\n");
 
