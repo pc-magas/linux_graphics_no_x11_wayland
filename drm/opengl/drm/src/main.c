@@ -96,6 +96,9 @@ int main(void)
         return 1;
     }
 
+    struct gbm_bo *previous_bo = NULL;
+    uint32_t previous_fb_id = 0;
+    
     while (true) {
 
         puts("Draw Square\n");
@@ -114,7 +117,24 @@ int main(void)
         }
 
         puts("Set CRTC\n");
-        drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);  
+        drmModeSetCrtc(drm_fd, crtc_id, gbm_bo_get_handle(bo).u32, 0, 0, &conn_id, 1, &mode);
+
+        if (ret != 0) {
+            perror("drmModeSetCrtc");
+            drmModeRmFB(drm_fd, fb_id);
+            gbm_surface_release_buffer(gbm_surf, bo);
+            break;
+        }
+
+        // New framebuffer is now installed.
+        // The old framebuffer is no longer needed by this CRTC.
+        if (previous_bo) {
+            drmModeRmFB(drm_fd, previous_fb_id);
+            gbm_surface_release_buffer(gbm_surf, previous_bo);
+        }
+
+        previous_bo = bo;
+        previous_fb_id = fb_id;
     }
 
     puts("Cleanup\n");
