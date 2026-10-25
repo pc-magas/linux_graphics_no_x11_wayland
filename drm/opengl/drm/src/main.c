@@ -98,7 +98,6 @@ int main(void)
 
     struct gbm_bo *previous_bo = NULL;
     uint32_t previous_fb_id = 0;
-    uint32_t fb_id = 0;
 
     while (true) {
 
@@ -117,9 +116,41 @@ int main(void)
             break;
         }
 
-        fb_id =  gbm_bo_get_handle(bo).u32;
-        puts("Set CRTC\n");
-        int ret = drmModeSetCrtc(drm_fd, crtc_id, fb_id, 0, 0, &conn_id, 1, &mode);
+        uint32_t fb_id = 0;
+
+        // Register GBM buffer as a DRM framebuffer
+        int ret = drmModeAddFB(
+            drm_fd,
+            gbm_bo_get_width(bo),
+            gbm_bo_get_height(bo),
+            24,
+            32,
+            gbm_bo_get_stride(bo),
+            gbm_bo_get_handle(bo).u32,
+            &fb_id
+        );
+
+        if (ret != 0) {
+            perror("drmModeAddFB");
+            gbm_surface_release_buffer(gbm_surf, bo);
+            break;
+        }
+
+        printf("GBM handle: %u\n", gbm_bo_get_handle(bo).u32);
+        printf("DRM framebuffer ID: %u\n", fb_id);
+
+        puts("Set CRTC");
+
+        ret = drmModeSetCrtc(
+            drm_fd,
+            crtc_id,
+            fb_id,
+            0,
+            0,
+            &conn_id,
+            1,
+            &mode
+        );
 
         if (ret != 0) {
             perror("drmModeSetCrtc");
@@ -128,8 +159,8 @@ int main(void)
             break;
         }
 
-        // New framebuffer is now installed.
-        // The old framebuffer is no longer needed by this CRTC.
+        // Previous framebuffer is no longer scanned out
+        // by this CRTC after successful modeset.
         if (previous_bo) {
             drmModeRmFB(drm_fd, previous_fb_id);
             gbm_surface_release_buffer(gbm_surf, previous_bo);
