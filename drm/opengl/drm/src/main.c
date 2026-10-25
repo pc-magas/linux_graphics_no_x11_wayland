@@ -80,6 +80,7 @@ int main(void)
 
     puts("Initiaslize context \n");
     EGLContext egl_context = initEGLContext(egl_display,config);
+    eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
     puts("Init program\n");
     GLuint program = createProgram();
@@ -93,7 +94,6 @@ int main(void)
 
     puts("Draw Square\n");
 
-    eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
     drawSquare(program, mode_w,mode_h);
     eglSwapBuffers(egl_display, egl_surface);
         
