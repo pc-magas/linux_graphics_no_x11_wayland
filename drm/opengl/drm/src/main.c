@@ -14,9 +14,6 @@
 #include "egl_init.h"
 #include "drm_init.h"
 
-#define WIDTH 800
-#define HEIGHT 600
-
 int main(void)
 {
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
@@ -92,8 +89,6 @@ int main(void)
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
 
-
-
     conn_id = connector->connector_id;
     crtc_id = crtc->crtc_id;
     
@@ -121,7 +116,7 @@ int main(void)
     uint32_t pitch  = gbm_bo_get_stride(bo);
     uint32_t fb_id  = 0;
 
-    int ret = drmModeAddFB(drm_fd, mode_w,mode_h, 24, 32, pitch, handle, &fb_id);
+    int ret = drmModeAddFB(drm_fd, mode_w, mode_h, 24, 32, pitch, handle, &fb_id);
     if (ret) {
         perror("drmModeAddFB");
         return 1;
