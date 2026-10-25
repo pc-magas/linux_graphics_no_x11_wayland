@@ -21,8 +21,6 @@ int main(void)
     
     struct gbm_surface *gbm_surf=NULL;
 
-    EGLDisplay egl_display;
-    EGLSurface egl_surface;
     EGLContext egl_context;
 
     uint32_t conn_id,crtc_id;
@@ -50,7 +48,7 @@ int main(void)
     }
 
     puts("Initiaslize display \n");
-    egl_display = initEGLDisplay(gbm_dev);
+    EGLDisplay egl_display = initEGLDisplay(gbm_dev);
 
     if(egl_display == EGL_NO_DISPLAY){
         fprintf(stderr,"Unable to Initialize EGL display");
@@ -72,7 +70,7 @@ int main(void)
     eglChooseConfig(egl_display, config_attribs, &config, 1, &num_configs);  
 
     puts("Initiaslize surface \n");
-    egl_surface = initEGLSurface(gbm_dev,egl_display,config,mode_w,mode_h, &gbm_surf);
+    EGLSurface egl_surface = initEGLSurface(gbm_dev,egl_display,config,mode_w,mode_h, &gbm_surf);
 
     if (egl_surface == EGL_NO_SURFACE) {
         fprintf(stderr, "Failed to create EGL surface\n");
@@ -85,12 +83,12 @@ int main(void)
     }
 
     puts("Initiaslize context \n");
-    egl_context = initEGLContext(egl_display,config);
+    EGLContext egl_context = initEGLContext(egl_display,config);
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
 
-    conn_id = connector->connector_id;
-    crtc_id = crtc->crtc_id;
+    uint32_t conn_id = connector->connector_id;
+    uint32_t crtc_id = crtc->crtc_id;
     
     puts("Init program\n");
     GLuint program = createProgram();
