@@ -98,7 +98,8 @@ int main(void)
 
     struct gbm_bo *previous_bo = NULL;
     uint32_t previous_fb_id = 0;
-    
+    uint32_t fb_id = 0;
+
     while (true) {
 
         puts("Draw Square\n");
@@ -116,9 +117,9 @@ int main(void)
             break;
         }
 
-        uint32_t fb_id =  gbm_bo_get_handle(bo).u32;
+        fb_id =  gbm_bo_get_handle(bo).u32;
         puts("Set CRTC\n");
-        drmModeSetCrtc(drm_fd, crtc_id, fb_id, 0, 0, &conn_id, 1, &mode);
+        int ret = drmModeSetCrtc(drm_fd, crtc_id, fb_id, 0, 0, &conn_id, 1, &mode);
 
         if (ret != 0) {
             perror("drmModeSetCrtc");
