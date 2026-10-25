@@ -21,7 +21,7 @@ GLuint createShader(GLenum type, const char *source)
     return shader;
 }
 
-GLuint crateShader()
+GLuint createColorShader()
 {
     const char *fs =
         "#version 100\n"

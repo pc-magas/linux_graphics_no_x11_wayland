@@ -83,7 +83,7 @@ int main(void)
     eglMakeCurrent(egl_display, egl_surface, egl_surface, egl_context);  
 
     puts("Init program\n");
-    GLuint shader = createShader();
+    GLuint shader = createColorShader();
     GLuint program = createProgram(shader);
     
     if (!program) {

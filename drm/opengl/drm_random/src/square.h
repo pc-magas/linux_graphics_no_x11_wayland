@@ -5,7 +5,7 @@
 
 GLuint createShader(GLenum type, const char *source);
 GLuint createProgram(GLuint f);
-GLuint crateShader();
+GLuint createColorShader();
 
 void drawSquare(GLuint program, int width, int height);
 
