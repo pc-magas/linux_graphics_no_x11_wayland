@@ -26,7 +26,7 @@ EGLDisplay initEGLDisplay(struct gbm_device *gbm_dev)
 
 EGLSurface initEGLSurface(struct gbm_device *gbm_dev,EGLDisplay display, EGLConfig config, unsigned int width, unsigned int height, struct gbm_surface **gbm_surf ){
     *gbm_surf = gbm_surface_create(gbm_dev, width, height, GBM_BO_FORMAT_ARGB8888, GBM_BO_USE_RENDERING);  
-    return eglCreateWindowSurface(display, config, (EGLNativeWindowType)gbm_surf, NULL);
+    return eglCreateWindowSurface(display, config, (EGLNativeWindowType)*gbm_surf, NULL);
 }
 
 EGLContext initEGLContext(EGLDisplay display, EGLConfig config){
