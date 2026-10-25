@@ -1,3 +1,5 @@
+#include "drm_init.h"
+
 drmModeConnector *getDRMConnector(int drm_fd)
 {
     drmModeRes *resources = drmModeGetResources(drm_fd);
