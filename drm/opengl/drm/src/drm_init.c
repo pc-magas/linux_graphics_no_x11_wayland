@@ -84,7 +84,6 @@ int displayRefresh(int drm_fd, struct gbm_surface *gbm_surf, uint32_t crtc_id, u
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(gbm_surf);
 
     if (!bo) {
-        fprintf(stderr, "Failed to lock front buffer\n");
         return -1;
     }
 
