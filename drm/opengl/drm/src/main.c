@@ -17,11 +17,8 @@
 int main(void)
 {
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
-    struct gbm_device *gbm_dev = gbm_create_device(drm_fd);  
-    
+    struct gbm_device *gbm_dev = gbm_create_device(drm_fd);      
     struct gbm_surface *gbm_surf=NULL;
-
-    EGLContext egl_context;
 
     puts("Get Connector \n");
     drmModeConnector *connector = getDRMConnector(drm_fd);
@@ -47,7 +44,7 @@ int main(void)
     }
 
     puts("Initiaslize GBM display");
-    
+
     EGLDisplay egl_display = initEGLDisplay(gbm_dev);
     if(egl_display == EGL_NO_DISPLAY){
         fprintf(stderr,"Unable to Initialize EGL display");
