@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#include <signal.h>
+#include <stdbool.h>
+
+
 #define GLFW_INCLUDE_ES2
 
 #include <drm.h>  
@@ -16,6 +20,13 @@
 #include "drm_init.h"
 #include "nextframe.h"
 
+static volatile sig_atomic_t running = 1;
+
+static void handleSignal(int sig)
+{
+    (void)sig;
+    running = 0;
+}
 
 void cleanup(
     EGLDisplay egl_display,
@@ -52,6 +63,9 @@ void cleanup(
 
 int main(void)
 {
+    signal(SIGINT, handleSignal);
+    signal(SIGTERM, handleSignal);
+
     int drm_fd = open("/dev/dri/card0", O_RDWR);  
     struct gbm_device *gbm_dev = gbm_create_device(drm_fd);      
     struct gbm_surface *gbm_surf=NULL;
@@ -135,7 +149,7 @@ int main(void)
 
     puts("Draw Square\n");
 
-    while(true){
+    while(running){
         drawSquare(program, mode_w,mode_h);
         eglSwapBuffers(egl_display, egl_surface);
         
