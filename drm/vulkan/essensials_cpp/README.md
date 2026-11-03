@@ -4,7 +4,7 @@
 ## Setup
 
 ```shell
-sudo apt-get install build-essential make libvulkan-dev libglfw3-dev libgl1-mesa-dev
+sudo apt-get install build-essential make libvulkan-dev libglfw3-dev libgl1-mesa-dev vulkan-validationlayers-dev spirv-tools glslang-tools
 ```
 
 ## Build & run
