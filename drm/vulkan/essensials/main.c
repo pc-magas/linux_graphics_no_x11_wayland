@@ -55,10 +55,9 @@ void renderTriangle(
     VkRenderPass renderPass,
     VkFramebuffer framebuffer,
     VkExtent2D swapchainExtent,
-    VkPipeline graphicsPipeline
+    VkPipeline graphicsPipeline,
+    VkBuffer vertexBuffer
 ){
-    VkRenderPass renderPass = createRenderPass();
-
     VkClearValue clearValues[1];
     clearValues[0].color.float32[0] = 0.0f;
     clearValues[0].color.float32[1] = 0.0f;
@@ -67,8 +66,8 @@ void renderTriangle(
 
     VkRenderPassBeginInfo rpBegin = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
     rpBegin.renderPass = renderPass;
-    rpBegin.framebuffer = framebufferForSwapchainImage;
-    rpBegin.renderArea.offset = {0,0};
+    rpBegin.framebuffer = framebuffer;
+    rpBegin.renderArea.offset = (VkOffset2D){0, 0};
     rpBegin.renderArea.extent = swapchainExtent;
     rpBegin.clearValueCount = 1;
     rpBegin.pClearValues = clearValues;
@@ -92,6 +91,22 @@ int main() {
     VkInstance instance;
     VkDevice device;
     VkCommandPool commandPool;
+
+    VkFormat swapchainFormat = VK_FORMAT_B8G8R8A8_SRGB;
+
+    VkRenderPass renderPass =
+        createRenderPass(device, swapchainFormat);
+
+    VkFramebuffer framebuffer = VK_NULL_HANDLE;
+
+    VkExtent2D swapchainExtent = {
+        .width = 800,
+        .height = 600
+    };
+
+    VkPipeline graphicsPipeline = VK_NULL_HANDLE;
+
+    VkBuffer vertexBuffer = VK_NULL_HANDLE;
 
     // Create Vulkan instance
     VkInstanceCreateInfo instanceCreateInfo = {};
@@ -127,7 +142,14 @@ int main() {
     VkCommandBufferBeginInfo beginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
     vkBeginCommandBuffer(cmd, &beginInfo);
 
-    renderTriangle(cmd);
+    renderTriangle(
+        cmd,
+        renderPass,
+        framebuffer,
+        swapchainExtent,
+        graphicsPipeline,
+        vertexBuffer
+    );
 
     vkEndCommandBuffer(cmd);
     // Cleanup resources
