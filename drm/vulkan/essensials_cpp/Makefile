@@ -1,5 +1,5 @@
 CXX      = g++
-GLSLC = glslangValidator -V
+GLSLC    = glslangValidator -V
 TARGET   = HelloTriangle
 SOURCE   = main.cpp
 
@@ -8,26 +8,31 @@ CXXFLAGS += $(shell pkg-config --cflags glfw3)
 
 LDFLAGS  = $(shell pkg-config --libs glfw3) -lvulkan
 
-SHADER_DIR = shaders
-SPV = $(SHADER_DIR)/vert.spv $(SHADER_DIR)/frag.spv
+SHADER_DIR  = shaders
+RELEASE_DIR = release
+OUT_SHADERS = $(RELEASE_DIR)/shaders
+SPV = $(OUT_SHADERS)/vert.spv $(OUT_SHADERS)/frag.spv
 
-all: $(TARGET) shaders
+all: $(RELEASE_DIR)/$(TARGET) shaders
 
-$(TARGET): $(SOURCE)
-	$(CXX) $(CXXFLAGS) $(SOURCE) -o $(TARGET) $(LDFLAGS)
+$(RELEASE_DIR)/$(TARGET): $(SOURCE) | $(RELEASE_DIR)
+	$(CXX) $(CXXFLAGS) $(SOURCE) -o $@ $(LDFLAGS)
 
 shaders: $(SPV)
 
-$(SHADER_DIR)/vert.spv: $(SHADER_DIR)/shader.vert
+$(OUT_SHADERS)/vert.spv: $(SHADER_DIR)/shader.vert | $(OUT_SHADERS)
 	$(GLSLC) $< -o $@
 
-$(SHADER_DIR)/frag.spv: $(SHADER_DIR)/shader.frag
+$(OUT_SHADERS)/frag.spv: $(SHADER_DIR)/shader.frag | $(OUT_SHADERS)
 	$(GLSLC) $< -o $@
 
-run: $(TARGET) $(SPV)
-	./$(TARGET)
+$(RELEASE_DIR) $(OUT_SHADERS):
+	mkdir -p $@
+
+run: all
+	cd $(RELEASE_DIR) && ./$(TARGET)
 
 clean:
-	rm -f $(TARGET) $(SPV)
+	rm -rf $(RELEASE_DIR)
 
 .PHONY: all shaders run clean
