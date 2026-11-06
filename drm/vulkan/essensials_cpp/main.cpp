@@ -43,6 +43,8 @@ private:
     VkSurfaceKHR surface = VK_NULL_HANDLE;
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device = VK_NULL_HANDLE;
+
+    
     VkQueue graphicsQueue = VK_NULL_HANDLE;
     VkQueue presentQueue = VK_NULL_HANDLE;
     uint32_t graphicsFamily = 0;
@@ -81,6 +83,7 @@ private:
         createSurface();
         pickPhysicalDevice();
         createLogicalDevice();
+        createQueues();
         createSwapChain();
         createImageViews();
         createRenderPass();
@@ -199,6 +202,7 @@ private:
         std::set<uint32_t> uniqueFamilies = {graphicsFamily, presentFamily};
         std::vector<VkDeviceQueueCreateInfo> queueInfos;
         float priority = 1.0f;
+
         for (uint32_t family : uniqueFamilies) {
             VkDeviceQueueCreateInfo q{};
             q.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
@@ -220,7 +224,9 @@ private:
 
         if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS)
             throw std::runtime_error("failed to create logical device!");
+    }
 
+    void createQueues() {
         vkGetDeviceQueue(device, graphicsFamily, 0, &graphicsQueue);
         vkGetDeviceQueue(device, presentFamily, 0, &presentQueue);
     }
