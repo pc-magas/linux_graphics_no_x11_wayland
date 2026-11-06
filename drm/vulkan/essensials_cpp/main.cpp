@@ -28,9 +28,12 @@ static std::vector<char> readFile(const std::string &path) {
 }
 
 class HelloTriangleApplication {
+    
 public:
+
+    explicit HelloTriangleApplication(GLFWwindow *win) : window(win) {}
+
     void run() {
-        initWindow();
         initVulkan();
         mainLoop();
         cleanup();
@@ -44,7 +47,7 @@ private:
     VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
     VkDevice device = VK_NULL_HANDLE;
 
-    
+
     VkQueue graphicsQueue = VK_NULL_HANDLE;
     VkQueue presentQueue = VK_NULL_HANDLE;
     uint32_t graphicsFamily = 0;
@@ -70,13 +73,6 @@ private:
     uint32_t currentFrame = 0;
 
     const std::vector<const char *> deviceExtensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-
-    void initWindow() {
-        glfwInit();
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
-    }
 
     void initVulkan() {
         createInstance();
@@ -606,8 +602,24 @@ private:
 };
 
 int main() {
+
+    if (!glfwInit()) {
+        std::cerr << "failed to init GLFW" << std::endl;
+        return EXIT_FAILURE;
+    }
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+    if (!window) {
+        glfwTerminate();
+        std::cerr << "failed to create window" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    
     try {
-        HelloTriangleApplication app;
+        HelloTriangleApplication app(window);
         app.run();
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
