@@ -6,7 +6,6 @@
 
 #include <xf86drm.h>
 #include <xf86drmMode.h>
-#include <gbm.h>
 
 #include "drm_init.h"
 #include "cairo_render.h"
@@ -14,9 +13,7 @@
 
 int main(void)
 {
-    int drm_fd = open("/dev/dri/card0", O_RDWR);  
-    struct gbm_device *gbm_dev = gbm_create_device(drm_fd);      
-    struct gbm_surface *gbm_surf = NULL;
+    int drm_fd = open("/dev/dri/card0", O_RDWR);
 
     puts("Get Connector \n");
 
