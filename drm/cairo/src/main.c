@@ -1,3 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <xf86drm.h>
+#include <xf86drmMode.h>
+
+#include "drm_init.h"
+#include "cairo_render.h"
+#include "drm_buffer.h"
+
 int main(void)
 {
     int status_code = 0;
