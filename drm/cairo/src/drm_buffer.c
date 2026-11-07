@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 #include <drm.h>
 #include <drm_mode.h>
+#include <xf86drm.h>
 
 #include "drm_buffer.h"
 

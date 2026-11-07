@@ -1,6 +1,6 @@
 
 
-#include "cairo_render.h";
+#include "cairo_render.h"
 
 cairo_t* init_cairo(void *map, uint32_t width,uint32_t height,uint32_t pitch, cairo_surface_t **surface ){
    *surface =cairo_image_surface_create_for_data(map,CAIRO_FORMAT_ARGB32,width,height,pitch);
