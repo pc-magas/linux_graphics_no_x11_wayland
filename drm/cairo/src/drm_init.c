@@ -71,3 +71,33 @@ drmModeCrtc *getDRMCrtc( int drm_fd, drmModeConnector *connector )
 
     return crtc;
 }
+
+int displayInit( int drm_fd, uint32_t crtc_id, uint32_t connector_id, drmModeModeInfo *mode, uint32_t handle, uint32_t pitch, uint32_t *fb_id)
+{
+    int ret = drmModeAddFB(drm_fd,mode->hdisplay,mode->vdisplay,24,32,pitch,handle,fb_id);
+
+    if (ret != 0) {
+        perror("drmModeAddFB");
+        return -1;
+    }
+
+    ret = drmModeSetCrtc(
+        drm_fd,
+        crtc_id,
+        *fb_id,
+        0,
+        0,
+        &connector_id,
+        1,
+        mode
+    );
+
+    if (ret != 0) {
+        perror("drmModeSetCrtc");
+        drmModeRmFB(drm_fd, *fb_id);
+        *fb_id = 0;
+        return -1;
+    }
+
+    return 0;
+}

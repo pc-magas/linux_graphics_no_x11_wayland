@@ -53,6 +53,13 @@ int main(void)
         goto cleanup;
     }
 
+    /* Initialize display and activate framebuffer */
+    if (displayInit(drm_fd,crtc->crtc_id,connector->connector_id,&mode,handle,pitch,&fb_id) != 0) {
+        fprintf(stderr, "Failed to initialize display\n");
+        status_code = 1;
+        goto cleanup;
+    }
+
     cairo_surface_t *surface=NULL;
     cairo_t *cairo = init_cairo(map, mode_w, mode_h, pitch, &surface);
 
