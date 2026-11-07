@@ -2,7 +2,7 @@ CC ?= gcc
 
 PKGS := libdrm cairo
 
-CFLAGS += -std=c11 -Wall -Wextra -O2 \
+CFLAGS += -std=gnu11 -Wall -Wextra -O2 \
           $(shell pkg-config --cflags $(PKGS))
 
 LDLIBS := $(shell pkg-config --libs $(PKGS))
