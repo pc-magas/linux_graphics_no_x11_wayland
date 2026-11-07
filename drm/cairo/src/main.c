@@ -1,103 +1,87 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#include <xf86drm.h>
-#include <xf86drmMode.h>
-
-#include "drm_init.h"
-#include "cairo_render.h"
-#include "drm_buffer.h"
-
 int main(void)
 {
     int status_code = 0;
 
-    int drm_fd = open("/dev/dri/card0", O_RDWR);
+    /* Everything cleanup touches, initialized to "not created" */
+    int drm_fd = -1;
+    drmModeConnector *connector = NULL;
+    drmModeCrtc *crtc = NULL;
 
-    if(drm_fd < 0) {
+    void *map = NULL;
+    uint32_t handle = 0;
+    uint32_t pitch  = 0;
+    uint64_t size   = 0;
+    uint32_t fb_id  = 0;
+
+    cairo_surface_t *surface = NULL;
+    cairo_t *cairo = NULL;
+
+    /* Now the real work; plain assignments, not declarations */
+    drm_fd = open("/dev/dri/card0", O_RDWR | O_CLOEXEC);
+    if (drm_fd < 0) {
+        perror("open /dev/dri/card0");
+        status_code = 1;
         goto cleanup;
     }
 
-    drmModeConnector *connector = getDRMConnector(drm_fd);
+    connector = getDRMConnector(drm_fd);
     if (!connector) {
-        status_code=1;
+        fprintf(stderr, "No connected DRM connector found\n");
+        status_code = 1;
         goto cleanup;
     }
 
-    drmModeModeInfo mode = connector->modes[0];
+    drmModeModeInfo mode = connector->modes[0];   /* see note below */
+    uint32_t mode_w = mode.hdisplay;
+    uint32_t mode_h = mode.vdisplay;
 
-    unsigned int mode_w = mode.hdisplay;
-    unsigned int mode_h = mode.vdisplay;
-
-    puts("Get CRTC\n");
-
-    drmModeCrtc *crtc = getDRMCrtc(drm_fd, connector);
+    crtc = getDRMCrtc(drm_fd, connector);
     if (!crtc) {
         fprintf(stderr, "No compatible CRTC found\n");
-        status_code=1;
+        status_code = 1;
         goto cleanup;
     }
 
-    uint32_t pitch;
-    uint32_t handle;
-    uint64_t size;
-
-    void *map = init_mmap(drm_fd,mode_w,mode_h,&pitch,&handle,&size);
-
+    map = init_mmap(drm_fd, mode_w, mode_h, &pitch, &handle, &size);
     if (!map) {
         fprintf(stderr, "Failed to initialize mmap\n");
-        status_code=1;
+        status_code = 1;
         goto cleanup;
     }
 
-    /* Initialize display and activate framebuffer */
-    if (displayInit(drm_fd,crtc->crtc_id,connector->connector_id,&mode,handle,pitch,&drm_fd) != 0) {
+    if (displayInit(drm_fd, crtc->crtc_id, connector->connector_id,
+                    &mode, handle, pitch, &fb_id) != 0) {
         fprintf(stderr, "Failed to initialize display\n");
         status_code = 1;
         goto cleanup;
     }
 
-    cairo_surface_t *surface=NULL;
-    cairo_t *cairo = init_cairo(map, mode_w, mode_h, pitch, &surface);
-
-    while(true){
-        draw_with_cairo(cairo);
-        cairo_surface_flush(surface);
+    cairo = init_cairo(map, mode_w, mode_h, pitch, &surface);
+    if (!cairo) {
+        status_code = 1;
+        goto cleanup;
     }
 
-    cleanup:
-        /* Destroy Cairo resources before unmapping their backing memory. */
-        if (cairo)
-            cairo_destroy(cairo);
+    draw_with_cairo(cairo);
+    cairo_surface_flush(surface);
+    getchar();
 
-        if (surface)
-            cairo_surface_destroy(surface);
+cleanup:
+    if (cairo)   cairo_destroy(cairo);
+    if (surface) cairo_surface_destroy(surface);
+    if (map)     drmUnmap(map, size);
 
-        if (map)
-            drmUnmap(map, size);
+    if (drm_fd >= 0 && fb_id)
+        drmModeRmFB(drm_fd, fb_id);
 
-        /* Destroy the dumb buffer allocated by init_mmap(). */
-        if (drm_fd >= 0 && handle != 0) {
-            struct drm_mode_destroy_dumb destroy = {
-                .handle = handle
-            };
+    if (drm_fd >= 0 && handle) {
+        struct drm_mode_destroy_dumb destroy = { .handle = handle };
+        drmIoctl(drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &destroy);
+    }
 
-            if (drmIoctl(drm_fd, DRM_IOCTL_MODE_DESTROY_DUMB, &destroy) < 0)
-                perror("Failed to destroy dumb buffer");
-        }
+    if (crtc)      drmModeFreeCrtc(crtc);
+    if (connector) drmModeFreeConnector(connector);
+    if (drm_fd >= 0) close(drm_fd);
 
-        if (crtc)
-            drmModeFreeCrtc(crtc);
-
-        if (connector)
-            drmModeFreeConnector(connector);
-
-        if (drm_fd >= 0)
-            close(drm_fd);
-
-        puts("Cleanup complete");
-        return status_code;
+    return status_code;
 }
