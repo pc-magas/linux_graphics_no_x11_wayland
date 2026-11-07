@@ -70,7 +70,7 @@ int main(void)
             cairo_surface_destroy(surface);
 
         if (map)
-            munmap(map, size);
+            drmUnmap(map, size);
 
         /* Destroy the dumb buffer allocated by init_mmap(). */
         if (drm_fd >= 0 && handle != 0) {
