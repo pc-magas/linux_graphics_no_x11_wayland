@@ -76,10 +76,13 @@ int main(void)
         goto cleanup;
     }
 
-    draw_with_cairo(cairo);
-    cairo_surface_flush(surface);
-    getchar();
-
+    while(true){
+        draw_with_cairo(cairo);
+        cairo_surface_flush(surface);
+        fprintf(stderr, "drawn, waiting 20s\n");
+        sleep(20);
+    }
+    
 cleanup:
     if (cairo)   cairo_destroy(cairo);
     if (surface) cairo_surface_destroy(surface);
