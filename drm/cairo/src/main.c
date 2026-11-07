@@ -30,7 +30,7 @@ int main(void)
     cairo_t *cairo = NULL;
 
     /* Now the real work; plain assignments, not declarations */
-    drm_fd = open("/dev/dri/card0", O_RDWR | O_CLOEXEC);
+    drm_fd = open("/dev/dri/card0", O_RDWR | FD_CLOEXEC);
     if (drm_fd < 0) {
         perror("open /dev/dri/card0");
         status_code = 1;
