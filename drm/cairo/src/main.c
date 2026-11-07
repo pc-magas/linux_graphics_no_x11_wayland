@@ -42,19 +42,11 @@ int main(void)
         return 1;
     }
 
-    
     uint32_t pitch;
     uint32_t handle;
     uint64_t size;
 
-    void *map = init_mmap(
-        drm_fd,
-        mode_w,
-        mode_h,
-        &pitch,
-        &handle,
-        &size
-    );
+    void *map = init_mmap(drm_fd,mode_w,mode_h,&pitch,&handle,&size);
 
     if (!map) {
         fprintf(stderr, "Failed to initialize mmap\n");
@@ -64,7 +56,7 @@ int main(void)
     cairo_surface_t *surface=NULL;
     cairo_t *cairo = init_cairo(map, mode_w, mode_h, pitch, &surface);
 
-    
+
 
     return 0;
 }

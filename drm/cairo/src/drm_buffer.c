@@ -31,14 +31,7 @@ void *init_mmap(int drm_fd,uint32_t width,uint32_t height,uint32_t *pitch,uint32
         return NULL;
     }
 
-    void *map = mmap(
-        NULL,
-        *size,
-        PROT_READ | PROT_WRITE,
-        MAP_SHARED,
-        drm_fd,
-        mreq.offset
-    );
+    void *map = mmap(NULL,*size,PROT_READ | PROT_WRITE,MAP_SHARED,drm_fd,mreq.offset);
 
     if (map == MAP_FAILED) {
         perror("mmap");
