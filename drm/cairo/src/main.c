@@ -54,7 +54,7 @@ int main(void)
     }
 
     /* Initialize display and activate framebuffer */
-    if (displayInit(drm_fd,crtc->crtc_id,connector->connector_id,&mode,handle,pitch,&fb_id) != 0) {
+    if (displayInit(drm_fd,crtc->crtc_id,connector->connector_id,&mode,handle,pitch,&drm_fd) != 0) {
         fprintf(stderr, "Failed to initialize display\n");
         status_code = 1;
         goto cleanup;
