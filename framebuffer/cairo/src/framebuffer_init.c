@@ -32,7 +32,7 @@ int framebuffer_init(
     *height = vinfo.yres;
     *bpp    = vinfo.bits_per_pixel;
 
-    *map = mmap(NULL,*size,PROT_READ | PROT_WRITE,MAP_SHARED,*fb_fd,0);
+    *map = mmap(NULL,*size,PROT_READ | PROT_WRITE,MAP_SHARED,fb,0);
 
     if (*map == MAP_FAILED) {
         perror("framebuffer mmap");
