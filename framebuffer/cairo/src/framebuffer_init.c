@@ -9,8 +9,8 @@
 #include <linux/fb.h>    // fb_var_screeninfo, fb_fix_screeninfo, FBIOGET_*
 #include <fcntl.h>       // open(), O_RDWR (if opening framebuffer here)
 
-int *framebuffer_init(
-    int *fb_fd,
+int framebuffer_init(
+    int *fb,
     uint32_t *width,
     uint32_t *height,
     uint32_t *pitch,
