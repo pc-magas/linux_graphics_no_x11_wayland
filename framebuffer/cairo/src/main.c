@@ -27,16 +27,11 @@ int main(void)
     uint64_t size = 0;
     void *map = NULL;
 
-    if (!framebuffer_init(
-        &fb,
-        &width,
-        &height,
-        &pitch,
-        &bpp,
-        &size,
-        &map
-    )) {
+    if (!framebuffer_init(fb,&width,&height,&pitch,&bpp,&size,&map)) {
+
         fprintf(stderr, "Framebuffer initialization failed\n");
+        framebuffer_cleanup(&fb, &map, size);
+
         return 1;
     }
 
