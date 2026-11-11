@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-int *framebuffer_init(
+int framebuffer_init(
     int fb,
     uint32_t *width,
     uint32_t *height,
