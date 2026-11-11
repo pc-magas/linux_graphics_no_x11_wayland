@@ -31,7 +31,11 @@ int framebuffer_init(
     *width  = vinfo.xres;
     *height = vinfo.yres;
     *bpp    = vinfo.bits_per_pixel;
+    *pitch  = finfo.line_length;   // bytes per row (was never set)
 
+    // Total mapped size: use the virtual height in case of double buffering
+    *size = (uint64_t)finfo.line_length * vinfo.yres_virtual;
+    
     *map = mmap(NULL,*size,PROT_READ | PROT_WRITE,MAP_SHARED,fb,0);
 
     if (*map == MAP_FAILED) {
