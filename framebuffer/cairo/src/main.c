@@ -39,35 +39,38 @@ int main(void)
 
     // Off-screen back buffer (normal heap memory, not the framebuffer)
     cairo_surface_t *back = cairo_image_surface_create(fmt, width, height);
+    
     if (cairo_surface_status(back) != CAIRO_STATUS_SUCCESS) {
+
         fprintf(stderr, "Back buffer creation failed\n");
+
+        cairo_surface_destroy(back);
+        free(backbuf);
         framebuffer_cleanup(&fb, &map, size);
+        
         return 1;
     }
 
     cairo_t *cr = cairo_create(back);
 
+    const struct timespec frame_delay = { 0, 16 * 1000 * 1000 }; // ~60 FPS
+
     while (true) {
-        draw_with_cairo(cairo);
-        cairo_surface_flush(surface);
+        draw_with_cairo(cr);
+        cairo_surface_flush(back);
 
-        uint8_t *src = cairo_image_surface_get_data(back);
-        int src_stride = cairo_image_surface_get_stride(back);
-
-        // Wait for vertical blank (ignore failure; not all drivers support it)
+        // Wait for vblank; if unsupported, fall back to a fixed delay
         uint32_t dummy = 0;
-        ioctl(fb, FBIO_WAITFORVSYNC, &dummy);
-
-        // Copy row by row, since the strides can differ
-        for (uint32_t y = 0; y < height; y++) {
-            memcpy((uint8_t *)map + (size_t)y * pitch,
-                src + (size_t)y * src_stride,
-                row_bytes);
+        if (ioctl(fb, FBIO_WAITFORVSYNC, &dummy) < 0) {
+            nanosleep(&frame_delay, NULL);
         }
+
+        // Single copy of the whole frame
+        memcpy(map, backbuf, frame_bytes);
     }
 
-    cairo_destroy(cairo);
-    cairo_surface_destroy(surface);
+    cairo_destroy(cr);
+    cairo_surface_destroy(back);
 
     framebuffer_cleanup(&fb, &map, size);
 
