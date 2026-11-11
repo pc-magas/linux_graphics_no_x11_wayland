@@ -71,7 +71,7 @@ int main(void)
         }
 
         // Single copy of the whole frame
-        memcpy(map, backbuf, frame_bytes);
+        memcpy(map, backbuf, size);
     }
 
     // Cleanup (reached if you add an exit condition to the loop)
