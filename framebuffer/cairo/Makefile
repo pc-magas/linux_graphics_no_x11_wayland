@@ -10,6 +10,7 @@ LDLIBS := $(shell pkg-config --libs $(PKGS))
 SRC_DIR := src
 BUILD_DIR := build
 
+DESTDIR := /opt/cairo/framebuffer
 TARGET := main
 
 SRCS := $(wildcard $(SRC_DIR)/*.c)
@@ -30,6 +31,9 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 -include $(DEPS)
+
+install: all
+	install -D -m 0755 $(TARGET) $(DESTDIR)/$(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
