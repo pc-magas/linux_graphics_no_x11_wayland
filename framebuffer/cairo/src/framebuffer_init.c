@@ -10,7 +10,7 @@
 #include <fcntl.h>       // open(), O_RDWR (if opening framebuffer here)
 
 int framebuffer_init(
-    int *fb,
+    int fb,
     uint32_t *width,
     uint32_t *height,
     uint32_t *pitch,
@@ -37,9 +37,7 @@ int framebuffer_init(
     if (*map == MAP_FAILED) {
         perror("framebuffer mmap");
         *map = NULL;
-        close(*fb_fd);
-        *fb_fd = -1;
-        return 0;
+        return 1;
     }
 
     return 1;

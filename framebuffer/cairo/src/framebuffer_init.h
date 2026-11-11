@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 int *framebuffer_init(
-    int *fb_fd,
+    int fb,
     uint32_t *width,
     uint32_t *height,
     uint32_t *pitch,
