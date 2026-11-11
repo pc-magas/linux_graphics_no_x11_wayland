@@ -37,17 +37,15 @@ int main(void)
     cairo_format_t fmt = (bpp == 32) ? CAIRO_FORMAT_RGB24
                                      : CAIRO_FORMAT_RGB16_565;
 
-    // Back buffer in normal RAM, with exactly the same layout as the framebuffer
-    size_t frame_bytes = (size_t)pitch * height;
-    uint8_t *backbuf = calloc(1, frame_bytes);
+    uint8_t *backbuf = calloc(1, (size_t) size);
+    
     if (!backbuf) {
         fprintf(stderr, "Back buffer allocation failed\n");
         framebuffer_cleanup(&fb, &map, size);
         return 1;
     }
 
-    cairo_surface_t *back = cairo_image_surface_create_for_data(
-        backbuf, fmt, width, height, pitch);
+    cairo_surface_t *back = cairo_image_surface_create_for_data(backbuf, fmt, width, height, pitch);
 
     if (cairo_surface_status(back) != CAIRO_STATUS_SUCCESS) {
         fprintf(stderr, "Back buffer surface creation failed: %s\n",

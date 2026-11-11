@@ -41,7 +41,7 @@ int framebuffer_init(
     if (*map == MAP_FAILED) {
         perror("framebuffer mmap");
         *map = NULL;
-        return 1;
+        return 0;
     }
 
     return 1;
