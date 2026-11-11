@@ -51,12 +51,18 @@ int main(void)
         draw_with_cairo(cairo);
         cairo_surface_flush(surface);
 
+        uint8_t *src = cairo_image_surface_get_data(back);
+        int src_stride = cairo_image_surface_get_stride(back);
+
+        // Wait for vertical blank (ignore failure; not all drivers support it)
         uint32_t dummy = 0;
         ioctl(fb, FBIO_WAITFORVSYNC, &dummy);
 
         // Copy row by row, since the strides can differ
         for (uint32_t y = 0; y < height; y++) {
-            memcpy((uint8_t *)map + (size_t)y * pitch,src + (size_t)y * src_stride,row_bytes);
+            memcpy((uint8_t *)map + (size_t)y * pitch,
+                src + (size_t)y * src_stride,
+                row_bytes);
         }
     }
 
