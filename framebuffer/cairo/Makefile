@@ -32,10 +32,10 @@ $(BUILD_DIR):
 
 -include $(DEPS)
 
-install: all
+install: $(TARGET)
 	install -D -m 0755 $(TARGET) $(DESTDIR)/$(TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean install
