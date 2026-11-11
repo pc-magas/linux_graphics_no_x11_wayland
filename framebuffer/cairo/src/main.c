@@ -13,7 +13,7 @@
 
 int main(void)
 {
-    int fb = open("/dev/fb0", O_RDWR);
+    int fb = open("/dev/fb0", O_RDWR|O_CLOEXEC);
 
     if (fb < 0) {
         perror("open framebuffer");
