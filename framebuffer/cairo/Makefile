@@ -58,4 +58,4 @@ install-service: setup-service-file setup-service-user
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-.PHONY: all clean install install-service setup-service-file
+.PHONY: all clean install install-service setup-service-file setup-service-user
