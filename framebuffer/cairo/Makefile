@@ -42,8 +42,7 @@ install: $(TARGET)
 	install -D -m 0755 $(TARGET) $(DESTDIR)/$(TARGET)
 
 setup-service-file:
-	sed -nfi \
-		"s|^ExecStart=.*|ExecStart=$(SERVICE_EXEC_START)|" \
+	sed "s|^ExecStart=.*|ExecStart=$(SERVICE_EXEC_START)|" \
 		"$(SERVICEFILE)" > /etc/systemd/system/$(SERVICEFILE)
 
 setup-service-user:
