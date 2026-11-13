@@ -52,8 +52,9 @@ setup-service-user:
 	systemd-sysusers $(SYSUSERS_DIR)/$(SERVICE_USERFILE)
 
 install-service: setup-service-file setup-service-user
-	sudo systemctl daemon-reload
-	sudo systemctl enable $(SERVICEFILE)
+	systemctl unmask $(SERVICEFILE)
+	systemctl daemon-reload
+	systemctl enable $(SERVICEFILE)
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
